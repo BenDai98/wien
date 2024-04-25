@@ -15,11 +15,13 @@ let startLayer = L.tileLayer.provider("OpenTopoMap");
 startLayer.addTo(map);
 
 let themaLayer = {
-  sights: L.featureGroup().addTo(map),
+  sights: L.featureGroup(),//.addTo(map),
   lines: L.featureGroup(),//.addTo(map),
   stops: L.featureGroup(),//.addTo(map),
   zones: L.featureGroup(),//.addTo(map),
-  hotels: L.featureGroup(),//.addTo(map),
+  hotels: L.markerClusterGroup({
+    disableClusteringAtZoom: 15
+  }),//.addTo(map),
 }
 
 // Hintergrundlayer
@@ -74,7 +76,7 @@ async function loadSights(url) {
     pointToLayer: function (feature, latlng) {
       return L.marker(latlng, {
         icon: myIcon
-      }).addTo(map);
+      });
 
       //return L.marker(latlng);
     },
@@ -97,7 +99,7 @@ async function loadLines(url) {
   let geojson = await respone.json();
   L.geoJson(geojson, {
     style: function (feature) {
-      console.log(feature.properties.LINE_NAME)
+      //console.log(feature.properties.LINE_NAME)
       let lineName = feature.properties.LINE_NAME;
       let lineColor = "#111111";
       if (lineName == "Red Line") {
@@ -153,16 +155,15 @@ async function loadStops(url) {
 
   L.geoJson(geojson, {
     pointToLayer: function (feature, latlng) {
-      console.log(feature.properties)
+      //console.log(feature.properties)
       return L.marker(latlng, {
         icon: L.icon({
           iconUrl: `icons/bus_${feature.properties.LINE_ID}.png`,
           iconAnchor: [16, 37],
           popupAnchor: [0, -37],
         }),
-      }).addTo(map);
+      })
 
-      //return L.marker(latlng);
     },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(`
@@ -209,7 +210,34 @@ async function loadHotels(url) {
   let respone = await fetch(url);
   let geojson = await respone.json();
   L.geoJson(geojson, {
+    pointToLayer: function (feature, latlng) {
+      console.log(feature.properties.KATEGORIE_TXT)
+      let hotelStars = feature.properties.KATEGORIE_TXT;
+      let hotelStarIcon = 'icons/hotel_0star.png';
+      if (hotelStars == "nicht kategorisiert") {
+        hotelStarIcon = 'icons/hotel_0star.png';
+      } else if (hotelStars == "1*") {
+        hotelStarIcon = 'icons/hotel_1star.png';
+      } else if (hotelStars == "2*") {
+        hotelStarIcon = 'icons/hotel_2stars.png';
+      } else if (hotelStars == "3*") {
+        hotelStarIcon = 'icons/hotel_3stars.png';
+      } else if (hotelStars == "4*") {
+        hotelStarIcon = 'icons/hotel_4stars.png';
+      } else if (hotelStars == "5*") {
+        hotelStarIcon = 'icons/hotel_5stars.png';
+      }
+
+      return L.marker(latlng, {
+        icon: L.icon({
+          iconUrl: hotelStarIcon,
+          iconAnchor: [16, 37],
+          popupAnchor: [0, -37],
+        }),
+      });
+    },
     onEachFeature: function (feature, layer) {
+      console.log(feature.properties)
       layer.bindPopup(`
         <h3><i class="fa-solid fa-hotel"></i> ${feature.properties.BETRIEB}</h3>
         <h4> ${feature.properties.BETRIEBSART_TXT} (${feature.properties.KATEGORIE_TXT})</h4>

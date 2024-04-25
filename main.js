@@ -16,7 +16,7 @@ startLayer.addTo(map);
 
 let themaLayer = {
   sights: L.featureGroup(),//.addTo(map),
-  lines: L.featureGroup(),//.addTo(map),
+  lines: L.featureGroup().addTo(map),
   stops: L.featureGroup(),//.addTo(map),
   zones: L.featureGroup().addTo(map),
   hotels: L.featureGroup(),//.addTo(map),
@@ -82,6 +82,30 @@ async function loadLines(url) {
   let respone = await fetch(url);
   let geojson = await respone.json();
   L.geoJson(geojson, {
+    style: function (feature) {
+      console.log(feature.properties.LINE_NAME)
+      let lineName = feature.properties.LINE_NAME;
+      let lineColor = "#111111";
+      if (lineName == "Red Line") {
+        lineColor = "#FF4136";
+      } else if (lineName == "Yellow Line") {
+        lineColor = "#FFDC00";
+      } else if (lineName == "Blue Line") {
+        lineColor = "#0074D9";
+      } else if (lineName == "Green Line") {
+        lineColor = "#2ECC40";
+      } else if (lineName == "Grey Line") {
+        lineColor = "#2ECC40";
+      } else if (lineName == "Orange Line") {
+        lineColor = "#FF851B";
+      }
+
+
+      return {
+        color: lineColor, //Randfarbe
+        weight: 2,
+      };
+    },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(`
         <h4><i class="fa-solid fa-bus"></i> ${feature.properties.LINE_NAME}</h4>
@@ -95,6 +119,14 @@ async function loadLines(url) {
     }
   }).addTo(themaLayer.lines);
 }
+
+
+//Red Line
+//Yellow Line
+//Blue Line
+//Green Line
+//Grey Line
+//orange Line
 
 loadLines("https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0&typeName=ogdwien:TOURISTIKLINIEVSLOGD&srsName=EPSG:4326&outputFormat=json")
 
@@ -123,7 +155,7 @@ async function loadZones(url) {
   L.geoJson(geojson, {
     style: function (feature) {
       return {
-        color: "#F012BE",
+        color: "#F012BE", //Randfarbe
         weight: 1,
         opacity: 0.4,
         fillOpacity: 0.1,

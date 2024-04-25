@@ -22,10 +22,6 @@ let themaLayer = {
   hotels: L.featureGroup(),//.addTo(map),
 }
 
-
-
-
-
 // Hintergrundlayer
 L.control
   .layers({
@@ -125,6 +121,16 @@ async function loadZones(url) {
   let respone = await fetch(url);
   let geojson = await respone.json();
   L.geoJson(geojson, {
+    style: function (feature) {
+      return {
+        color: "#F012BE",
+        weight: 1,
+        opacity: 0.4,
+        fillOpacity: 0.1,
+      };
+
+
+    },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(`
         <h4><i class="fa-solid fa-person-walking"></i> Fußgängerzone, ${feature.properties.ADRESSE}</h4>

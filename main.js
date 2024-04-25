@@ -100,7 +100,6 @@ async function loadLines(url) {
         lineColor = "#FF851B";
       }
 
-
       return {
         color: lineColor, //Randfarbe
         weight: 2,

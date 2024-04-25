@@ -15,12 +15,14 @@ let startLayer = L.tileLayer.provider("OpenTopoMap");
 startLayer.addTo(map);
 
 let themaLayer = {
-  sights: L.featureGroup().addTo(map),
-  lines: L.featureGroup().addTo(map),
-  stops: L.featureGroup().addTo(map),
+  sights: L.featureGroup(),//.addTo(map),
+  lines: L.featureGroup(),//.addTo(map),
+  stops: L.featureGroup(),//.addTo(map),
   zones: L.featureGroup().addTo(map),
-  hotels: L.featureGroup().addTo(map),
+  hotels: L.featureGroup(),//.addTo(map),
 }
+
+
 
 
 

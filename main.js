@@ -126,8 +126,8 @@ async function loadZones(url) {
     onEachFeature: function (feature, layer) {
       layer.bindPopup(`
         <h4><i class="fa-solid fa-person-walking"></i> Fußgängerzone, ${feature.properties.ADRESSE}</h4>
-        <i class="fa-regular fa-clock"></i> ${feature.properties.ZEITRAUM}<br><br>
-        <i class="fa-solid fa-circle-info"></i> ${feature.properties.AUSN_TEXT}
+        <i class="fa-regular fa-clock"></i> ${feature.properties.ZEITRAUM || "Dauerhaft geöffnet"}<br><br>
+        <i class="fa-solid fa-circle-info"></i> ${feature.properties.AUSN_TEXT || "Keine Information"}
       `)
     }
   }).addTo(themaLayer.zones);

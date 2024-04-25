@@ -15,10 +15,10 @@ let startLayer = L.tileLayer.provider("OpenTopoMap");
 startLayer.addTo(map);
 
 let themaLayer = {
-  sights: L.featureGroup(),//.addTo(map),
-  lines: L.featureGroup().addTo(map),
+  sights: L.featureGroup().addTo(map),
+  lines: L.featureGroup(),//.addTo(map),
   stops: L.featureGroup(),//.addTo(map),
-  zones: L.featureGroup().addTo(map),
+  zones: L.featureGroup(),//.addTo(map),
   hotels: L.featureGroup(),//.addTo(map),
 }
 
@@ -63,7 +63,21 @@ async function loadSights(url) {
   console.log("loading", url);
   let respone = await fetch(url);
   let geojson = await respone.json();
+
+  let myIcon = L.icon({
+    iconUrl: 'icons/photo.png',
+    iconAnchor: [16, 37],
+    popupAnchor: [0, -37],
+  });
+
   L.geoJson(geojson, {
+    pointToLayer: function (feature, latlng) {
+      return L.marker(latlng, {
+        icon: myIcon
+      }).addTo(map);
+
+      //return L.marker(latlng);
+    },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(`
         <img src="${feature.properties.THUMBNAIL}" alt="*">
@@ -95,7 +109,7 @@ async function loadLines(url) {
       } else if (lineName == "Green Line") {
         lineColor = "#2ECC40";
       } else if (lineName == "Grey Line") {
-        lineColor = "#2ECC40";
+        lineColor = "#AAAAAA";
       } else if (lineName == "Orange Line") {
         lineColor = "#FF851B";
       }
@@ -111,30 +125,45 @@ async function loadLines(url) {
         <adress><i class="fa-regular fa-circle-stop"> </i>${feature.properties.FROM_NAME}</adress><br>
         <i class="fa-solid fa-arrow-down"></i><br>
         <adress><i class="fa-regular fa-circle-stop"> </i>${feature.properties.TO_NAME}</adress>
-
-
-        
       `)
     }
   }).addTo(themaLayer.lines);
 }
 
 
-//Red Line
-//Yellow Line
-//Blue Line
-//Green Line
-//Grey Line
-//orange Line
+
 
 loadLines("https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0&typeName=ogdwien:TOURISTIKLINIEVSLOGD&srsName=EPSG:4326&outputFormat=json")
+
+/*
+bus_1.png ////Red Line
+bus_2.png ////Yellow Line
+bus_3.png ////Blue Line
+bus_4.png ////Green Line
+bus_5.png ////Grey Line
+bus_6.png ////Orange Line
+*/
 
 
 async function loadStops(url) {
   console.log("loading", url);
   let respone = await fetch(url);
   let geojson = await respone.json();
+
+
   L.geoJson(geojson, {
+    pointToLayer: function (feature, latlng) {
+      console.log(feature.properties)
+      return L.marker(latlng, {
+        icon: L.icon({
+          iconUrl: `icons/bus_${feature.properties.LINE_ID}.png`,
+          iconAnchor: [16, 37],
+          popupAnchor: [0, -37],
+        }),
+      }).addTo(map);
+
+      //return L.marker(latlng);
+    },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(`
         <h4><i class="fa-solid fa-bus"></i> ${feature.properties.LINE_NAME}</h4>
